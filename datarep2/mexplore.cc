@@ -4,12 +4,12 @@
 #include <string.h>
 #include "hexdump.hh"
 
-char global_ch = 'A';
-const char const_global_ch = 'B';
+char global_ch = 65;
+const char const_global_ch = 66;
 
 void f() {
-    char local_ch = 'C';
-    char* allocated_ch = new char('D');
+    char local_ch = 67;
+    char* allocated_ch = new char(68);
 
     hexdump(&global_ch, 1);
     hexdump(&const_global_ch, 1);
