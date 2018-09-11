@@ -6,7 +6,9 @@
 #include "hexdump.hh"
 
 void f() {
-    int i1 = 0, i2 = 1, i3 = 2;
+    int i1 = 0;
+    int i2 = 1;
+    int i3 = 2;
     char c1 = 3;
     char c2 = 4;
     char c3 = 5;
