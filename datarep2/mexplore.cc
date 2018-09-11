@@ -10,6 +10,8 @@ const char const_global_ch = 66;
 void f() {
     char local_ch = 67;
     char* allocated_ch = new char(68);
+    // C-style allocation:
+    // char* allocated_ch = (char*) malloc(68 * sizeof(char));
 
     hexdump(&global_ch, 1);
     hexdump(&const_global_ch, 1);
