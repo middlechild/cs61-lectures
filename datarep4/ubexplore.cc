@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 int check_signed_increment(int x) {

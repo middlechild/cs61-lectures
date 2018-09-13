@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 void check_pointer_wrap(char* x) {
