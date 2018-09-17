@@ -70,6 +70,7 @@ else
 run = @$(if $(2),/bin/echo "  $(2) $(3)" &&,) $(1) $(3)
 xrun = $(if $(2),/bin/echo "  $(2) $(3)" &&,) $(1) $(3)
 endif
+runquiet = @$(1) $(3)
 
 CLEANASM = 1
 ifeq ($(CLEANASM),1)
