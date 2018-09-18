@@ -1,4 +1,5 @@
-PROGRAMS = mexplore.noopt mexplore ubexplore.noopt ubexplore
+BASEPROGRAMS = mexplore mexplore-struct ubexplore
+PROGRAMS = $(BASEPROGRAMS) $(patsubst %,%.noopt,$(BASEPROGRAMS))
 all: $(PROGRAMS)
 
 ALLPROGRAMS = $(PROGRAMS)
@@ -14,10 +15,10 @@ include ../common/rules.mk
 %.noopt.o: %.cc $(BUILDSTAMP)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -O0 $(DEPCFLAGS) -o $@ -c $<
 
-mexplore.noopt ubexplore.noopt: %.noopt: %.noopt.o hexdump.o
+$(patsubst %,%.noopt,$(BASEPROGRAMS)): %.noopt: %.noopt.o hexdump.o
 	$(CXX) $(CXXFLAGS) -O0 -o $@ $^
 
-mexplore ubexplore: %: %.o hexdump.o
+$(BASEPROGRAMS): %: %.o hexdump.o
 	$(CXX) $(CXXFLAGS) -O3 -o $@ $^
 
 clean:
