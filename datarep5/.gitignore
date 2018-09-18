@@ -1,0 +1,5 @@
+*.noopt
+*.opt
+*.unsafe
+membench-*
+ubexplore2
