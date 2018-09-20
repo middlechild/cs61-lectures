@@ -8,6 +8,7 @@ ifeq ($(filter 0 1 2 3 s,$(O)),$(strip $(O)))
 override O := -O$(O)
 endif
 
+# sanitizer arguments
 ifndef SAN
 SAN := $(SANITIZE)
 endif
@@ -42,6 +43,12 @@ ifeq ($(or $(UBSAN),$(SAN)),1)
 CFLAGS += -fsanitize=undefined
 CXXFLAGS += -fsanitize=undefined
  endif
+endif
+
+# profiling
+ifeq ($(or $(PROFILE),$(PG)),1)
+CFLAGS += -pg
+CXXFLAGS += -pg
 endif
 
 # these rules ensure dependencies are created
