@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <assert.h>
+#include <unistd.h>
+#include <sys/resource.h>
 #include <atomic>
 
 static unsigned noperations;
@@ -15,12 +17,41 @@ void* benchmark_thread(void* user_data) {
 
 int main(int argc, char** argv) {
     noperations = 10000000;
-    if (argc >= 2) {
-        noperations = strtoul(argv[1], nullptr, 0);
-    }
     int nthreads = 1;
-    if (argc >= 3) {
-        nthreads = strtol(argv[2], nullptr, 0);
+
+    int opt;
+    while ((opt = getopt(argc, argv, "n:j:m:")) != -1) {
+        switch (opt) {
+        case 'n': {
+            char* end;
+            noperations = strtoul(optarg, &end, 0);
+            if (*end == 'm' || *end == 'M') {
+                noperations *= 1000000;
+            }
+            break;
+        }
+        case 'j':
+            nthreads = strtol(optarg, nullptr, 0);
+            break;
+        case 'm': {
+            struct rlimit rlim;
+            getrlimit(RLIMIT_AS, &rlim);
+            char* end;
+            rlim.rlim_cur = strtoul(optarg, &end, 0);
+            if (*end == 'm' || *end == 'M') {
+                rlim.rlim_cur *= 1000000;
+            }
+            if (rlim.rlim_cur <= 0) {
+                rlim.rlim_cur = 10000000;
+            }
+            int r = setrlimit(RLIMIT_AS, &rlim);
+            assert(r >= 0);
+            break;
+        }
+        default:
+            fprintf(stderr, "Usage: %s [-n NOPS] [-j NTHREADS] [-m MEMLIMIT]\n  Default NOPS=%u, NTHREADS=1, no MEMLIMIT", argv[0], noperations);
+            exit(1);
+        }
     }
 
     if (nthreads <= 1) {
