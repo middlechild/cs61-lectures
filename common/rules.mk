@@ -7,6 +7,7 @@ O ?= -O3
 ifeq ($(filter 0 1 2 3 s,$(O)),$(strip $(O)))
 override O := -O$(O)
 endif
+LDFLAGS := -no-pie
 
 # sanitizer arguments
 ifndef SAN
