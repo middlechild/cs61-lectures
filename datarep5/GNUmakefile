@@ -6,7 +6,8 @@ ifneq ($(wildcard /usr/lib/libtcmalloc_minimal*),)
 MEMBENCH_PROGRAMS += membench-tcmalloc
 endif
 
-PROGRAMS = $(MEMBENCH_PROGRAMS) ubexplore2 ubexplore2.noopt
+PROGRAMS = $(MEMBENCH_PROGRAMS) ubexplore2 ubexplore2.noopt \
+	ubexplore2u ubexplore2u.noopt ubexplore2l ubexplore2l.noopt
 
 all: $(PROGRAMS)
 
@@ -37,10 +38,10 @@ membench-tcmalloc: membench.o mb-malloc.o
 membench-jemalloc: membench.o mb-malloc.o
 	$(CXX) $(CXXFLAGS) $(O) -o $@ $^ -lpthread -ljemalloc
 
-ubexplore2: ubexplore2.o
+ubexplore2 ubexplore2u ubexplore2l: %: %.o
 	$(CXX) $(CXXFLAGS) $(O) -o $@ $^
 
-ubexplore2.noopt: ubexplore2.noopt.o
+ubexplore2.noopt ubexplore2u.noopt ubexplore2l.noopt: %: %.o
 	$(CXX) $(CXXFLAGS) -O0 -o $@ $^
 
 
