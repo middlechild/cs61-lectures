@@ -4,35 +4,12 @@
 	.type	_Z1fllllll, @function
 _Z1fllllll:
 .LFB0:
-	movq	%rdi, -8(%rsp)
-	movq	%rsi, -16(%rsp)
-	movq	%rdx, -24(%rsp)
-	movq	%rcx, -32(%rsp)
-	movq	%r8, -40(%rsp)
-	movq	%r9, -48(%rsp)
-	movq	-16(%rsp), %rax
-	leaq	(%rax,%rax), %rdx
-	movq	-8(%rsp), %rax
-	leaq	(%rdx,%rax), %rcx
-	movq	-24(%rsp), %rdx
-	movq	%rdx, %rax
-	addq	%rax, %rax
-	addq	%rdx, %rax
-	leaq	(%rcx,%rax), %rdx
-	movq	-32(%rsp), %rax
-	salq	$2, %rax
-	leaq	(%rdx,%rax), %rcx
-	movq	-40(%rsp), %rdx
-	movq	%rdx, %rax
-	salq	$2, %rax
-	addq	%rdx, %rax
-	addq	%rax, %rcx
-	movq	-48(%rsp), %rdx
-	movq	%rdx, %rax
-	addq	%rax, %rax
-	addq	%rdx, %rax
-	addq	%rax, %rax
-	addq	%rcx, %rax
+	movl	%edi, a(%rip)
+	movl	%esi, 4+a(%rip)
+	movl	%edx, 8+a(%rip)
+	movl	%ecx, 12+a(%rip)
+	movl	%r8d, 16+a(%rip)
+	movl	%r9d, 20+a(%rip)
 	ret
 .LFE0:
 	.size	_Z1fllllll, .-_Z1fllllll
