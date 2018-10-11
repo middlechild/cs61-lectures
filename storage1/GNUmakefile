@@ -47,10 +47,10 @@ base-matrixmultiply matrixmultiply: %: %.o
 
 
 r%: r%.o
-	$(CC) $(CFLAGS) $(O) -o $@ $^
+	$(CXX) $(CXXFLAGS) $(O) -o $@ $(LDFLAGS) $(LIBS) $^
 
 w%: w%.o
-	$(CC) $(CFLAGS) $(O) -o $@ $^
+	$(CXX) $(CXXFLAGS) $(O) -o $@ $(LDFLAGS) $(LIBS) $^
 
 DATASIZE := $(shell wc -c $(DATAFILE) 2>/dev/null | awk '{ print $$1 }')
 DATADEP := $(shell if test "$(DATASIZE)" -lt 51200000; then echo always; fi)
