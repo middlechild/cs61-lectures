@@ -1,58 +1,65 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <assert.h>
 #include <sys/fcntl.h>
 
 #define TESTFILE "coherence-test.txt"
 
-void write_1() {
+void write_cs_61_is_terrible() {
     FILE* f = fopen(TESTFILE, "w");
     fprintf(f, "CS 61 is terrible!\n");
     fclose(f);
 }
 
-void write_2() {
+void write_cs_61_is_awesome() {
     FILE* f = fopen(TESTFILE, "w");
     fprintf(f, "CS 61 is awesome!!\n");
     fclose(f);
 }
 
 
-void read_using_stdio() {
-    write_1();
+void read_using_syscalls() {
+    write_cs_61_is_terrible();
 
-    FILE* f = fopen(TESTFILE, "r");
+    // open file descriptor
+    int fd = open(TESTFILE, O_RDONLY);
+
+    // read first 9 bytes
     char buf[BUFSIZ];
-    size_t nr = fread(buf, 1, 9, f);
-    fwrite(buf, 1, nr, stdout);
+    ssize_t nr1 = read(fd, buf, 9);
+    assert(nr1 >= 0);
 
-    write_2();
+    write_cs_61_is_awesome();
 
-    nr = fread(buf, 1, BUFSIZ, f);
-    fwrite(buf, 1, nr, stdout);
-
-    fclose(f);
+    // read rest of file, print to stdout
+    ssize_t nr2 = read(fd, buf + nr1, BUFSIZ - nr1);
+    close(fd);
+    fwrite(buf, 1, nr1 + nr2, stdout);
 }
 
-void read_using_syscalls() {
-    write_1();
 
-    int fd = open(TESTFILE, O_RDONLY);
+void read_using_stdio() {
+    write_cs_61_is_terrible();
+
+    // open stdio file
+    FILE* f = fopen(TESTFILE, "r");
+
+    // read first 9 bytes
     char buf[BUFSIZ];
-    ssize_t nr = read(fd, buf, 9);
-    fwrite(buf, 1, nr, stdout);
+    size_t nr1 = fread(buf, 1, 9, f);
 
-    write_2();
+    write_cs_61_is_awesome();
 
-    nr = read(fd, buf, BUFSIZ);
-    fwrite(buf, 1, nr, stdout);
-
-    close(fd);
+    // read rest of file, print to stdout
+    size_t nr2 = fread(buf + nr1, 1, BUFSIZ - nr1, f);
+    fclose(f);
+    fwrite(buf, 1, nr1 + nr2, stdout);
 }
 
 
 static void usage() {
-    fprintf(stderr, "Usage: ./coherence -s (stdio)  or  ./coherence -y (syscalls)\n");
+    fprintf(stderr, "Usage: ./coherence -y (syscalls)  or  ./coherence -s (stdio)\n");
     exit(1);
 }
 
