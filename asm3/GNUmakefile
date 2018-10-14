@@ -4,7 +4,7 @@ ASM_PROGRAMS := $(shell grep -l main $(wildcard f[0-9][0-9].s f[0-9][0-9].cc) | 
 DEFAULT_ASM_CXXFLAGS = -O1
 DEFAULT_ASM_CXXFLAGS_DEBUG = -g $(DEFAULT_ASM_CXXFLAGS)
 
-PROGRAMS = $(ASM_PROGRAMS) attackme attackme.unsafe
+PROGRAMS = $(ASM_PROGRAMS)
 
 all: $(ASMS) $(PROGRAMS)
 
@@ -44,12 +44,6 @@ $(ASM_PROGRAMS): %: %.s
 	  CXXFLAGS="`echo "$(CXXFLAGS)" | sed 's/ *-g */ /;s/ *-std=[^ ]* */ /'`"; \
 	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
 	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ $<,ASSEMBLE $@)
-
-attackme: attackme.o
-	@$(call xrun,$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS),LINK $@)
-
-attackme.unsafe: attackme.unsafe.o
-	@$(call xrun,$(CXX) $(CXXFLAGS) $(UNSAFEFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS),LINK $@)
 
 
 allfc.txt: $(wildcard f*.cc) always
