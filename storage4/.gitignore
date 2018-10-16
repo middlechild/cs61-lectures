@@ -31,3 +31,5 @@ coherence
 [rw][0-9][0-9]-syncblock
 [rw][0-9][0-9]-syncbyte
 [rw][0-9][0-9]-stdioskipbyte
+matrixmultiply
+base-matrixmultiply
