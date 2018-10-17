@@ -15,16 +15,19 @@ ALLPROGRAMS = $(PROGRAMS)
 O = 1
 include ../common/rules.mk
 
-UNSAFEFLAGS := -U_FORTIFY_SOURCE -fno-stack-protector
+UNSAFEFLAGS := -U_FORTIFY_SOURCE -fno-stack-protector $(if $(ISLINUX),-no-pie,)
 
-%.o: %.c $(BUILDSTAMP)
+%.o: %.cc $(BUILDSTAMP)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPCFLAGS) $(O) -o $@ -c $<
 
-%.noopt.o: %.c $(BUILDSTAMP)
+%.noopt.o: %.cc $(BUILDSTAMP)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPCFLAGS) -O0 -o $@ -c $<
 
-%.unsafe.o: %.c $(BUILDSTAMP)
+%.unsafe.o: %.cc $(BUILDSTAMP)
 	$(CXX) $(CPPFLAGS) $(UNSAFEFLAGS) $(CXXFLAGS) $(DEPCFLAGS) $(O) -o $@ -c $<
+
+%.unsafenoopt.o: %.cc $(BUILDSTAMP)
+	$(CXX) $(CPPFLAGS) $(UNSAFEFLAGS) $(CXXFLAGS) $(DEPCFLAGS) -O0 -o $@ -c $<
 
 
 $(ASM_OBJECTS): %.o: %.s $(BUILDSTAMP)
@@ -36,11 +39,18 @@ $(ASM_OBJECTS): %.o: %.s $(BUILDSTAMP)
 	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
 	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
 
+%.unsafe.s: %.cc GNUmakefile
+	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
+	  CXXFLAGS="`echo "$(UNSAFEFLAGS) $(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
+	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
+	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
+
 $(ASM_PROGRAMS): %: %.s
 	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
 	  CXXFLAGS="`echo "$(CXXFLAGS)" | sed 's/ *-g */ /;s/ *-std=[^ ]* */ /'`"; \
 	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
 	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ $<,ASSEMBLE $@)
+
 
 allfc.txt: $(wildcard f*.cc) always
 	for i in f*.cc; do echo $$i; echo ========; cat $$i; echo; echo; done > allfc.txt
