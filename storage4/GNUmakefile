@@ -20,19 +20,16 @@ endif
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPCFLAGS) $(O) -o $@ -c $<
 
 r%: r%.o
-	$(CXX) $(CXXFLAGS) $(O) -o $@ $(LDFLAGS) $(LIBS) $^
+	$(CXX) $(CXXFLAGS) $(O) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 w%: w%.o
-	$(CXX) $(CXXFLAGS) $(O) -o $@ $(LDFLAGS) $(LIBS) $^
-
-coherence: coherence.o
-	$(CXX) $(CXXFLAGS) $(O) -o $@ $(LDFLAGS) $(LIBS) $^
+	$(CXX) $(CXXFLAGS) $(O) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 matrixmultiply: matrixmultiply.o
-	$(CXX) $(CXXFLAGS) $(O) -o $@ $(LDFLAGS) $(LIBS) $^
+	$(CXX) $(CXXFLAGS) $(O) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 base-matrixmultiply: base-matrixmultiply.o
-	$(CXX) $(CXXFLAGS) $(O) -o $@ $(LDFLAGS) $(LIBS) $^
+	$(CXX) $(CXXFLAGS) $(O) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 DATASIZE := $(shell cat $(DATAFILE) 2>/dev/null | wc -c | awk '{ print $$1 }')
 DATADEP := $(shell if test "$(DATASIZE)" -lt 51200000; then echo always; fi)
