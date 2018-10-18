@@ -14,8 +14,14 @@ int main() {
     const char* buf = "6";
     double start = tstamp();
 
+    size_t pos = size;
     size_t n = 0;
-    while (n < size) {
+    while (pos > 0) {
+        pos -= 1;
+        if (fseek(f, pos, SEEK_SET) == -1) {
+            perror("fseek");
+            exit(1);
+        }
         size_t r = fwrite(buf, 1, 1, f);
         if (r != 1) {
             perror("fwrite");

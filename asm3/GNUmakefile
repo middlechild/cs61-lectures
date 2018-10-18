@@ -39,6 +39,12 @@ $(ASM_OBJECTS): %.o: %.s $(BUILDSTAMP)
 	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
 	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
 
+%.unsafe.s: %.cc GNUmakefile
+	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
+	  CXXFLAGS="`echo "$(UNSAFEFLAGS) $(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
+	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
+	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
+
 $(ASM_PROGRAMS): %: %.s
 	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
 	  CXXFLAGS="`echo "$(CXXFLAGS)" | sed 's/ *-g */ /;s/ *-std=[^ ]* */ /'`"; \

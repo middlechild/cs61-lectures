@@ -18,7 +18,7 @@ int main() {
     while (n < size) {
         size_t r = fwrite(buf, 1, 1, f);
         if (r != 1) {
-            perror("write");
+            perror("fwrite");
             exit(1);
         }
         n += r;
