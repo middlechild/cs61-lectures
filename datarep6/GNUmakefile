@@ -43,5 +43,6 @@ ubexplore2.noopt: ubexplore2.noopt.o
 
 clean:
 	rm -f $(ALLPROGRAMS) *.o
+	rm -rf $(DEPSDIR) *.dSYM
 
 .PHONY: all clean
