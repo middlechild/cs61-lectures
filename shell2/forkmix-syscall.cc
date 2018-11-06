@@ -1,12 +1,8 @@
 #include "helpers.hh"
 
-int main(int argc, char* argv[]) {
-    assert(argc >= 2);
-
+int main() {
     pid_t p1 = fork();
     assert(p1 >= 0);
-
-    FILE* f = fopen(argv[1], "w");
 
     const char* text;
     if (p1 == 0) {
@@ -16,6 +12,7 @@ int main(int argc, char* argv[]) {
     }
 
     for (int i = 0; i != 1000000; ++i) {
-        fputs(text, f);
+        ssize_t s = write(STDOUT_FILENO, text, strlen(text));
+        assert(s == (ssize_t) strlen(text));
     }
 }

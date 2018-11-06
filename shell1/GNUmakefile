@@ -1,4 +1,4 @@
-PROGRAMS = fork1 fork2 fork2b forkmix forkmix2 manyfork \
+PROGRAMS = fork1 fork2 fork2b manyfork \
 	myecho runmyecho forkmyecho \
 	waitdemo waittimeout waitblock
 

@@ -1,6 +1,9 @@
 #include "helpers.hh"
 
-int main() {
+int main(int argc, char* argv[]) {
+    assert(argc >= 2);
+    FILE* f = fopen(argv[1], "w");
+
     pid_t p1 = fork();
     assert(p1 >= 0);
 
@@ -12,6 +15,6 @@ int main() {
     }
 
     for (int i = 0; i != 1000000; ++i) {
-        fputs(text, stdout);
+        fputs(text, f);
     }
 }
