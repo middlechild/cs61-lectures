@@ -1,4 +1,8 @@
-PROGRAMS = fork1 fork2 fork2b manyfork
+PROGRAMS = fork1 fork2 \
+	forkmix-syscall forkmix-stdio forkmix-file \
+	myecho runmyecho forkmyecho spawnmyecho \
+	waitdemo \
+	selfpipe childpipe filtermultiples primesieve
 
 all: $(PROGRAMS)
 
@@ -6,6 +10,7 @@ ALLPROGRAMS = $(PROGRAMS)
 
 O = 2
 include ../common/rules.mk
+LDFLAGS := $(filter-out -no-pie,$(LDFLAGS))
 
 %.o: %.cc $(BUILDSTAMP)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPCFLAGS) $(O) -o $@ -c $<
