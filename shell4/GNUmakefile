@@ -1,6 +1,6 @@
 PROGRAMS = pipesizer filtermultiples primesieve \
-	timedwait-poll timedwait-block timedwait-blockvar timedwait-selfpipe \
-	timedwait-signalfd
+	timedwait-poll timedwait-alarm timedwait-block timedwait-blockvar \
+	timedwait-selfpipe timedwait-signalfd
 
 all: $(PROGRAMS)
 

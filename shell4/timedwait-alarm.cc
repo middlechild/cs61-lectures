@@ -7,8 +7,15 @@ void signal_handler(int signal) {
 int main(int, char** argv) {
     fprintf(stderr, "Hello from %s parent pid %d\n", argv[0], getpid());
 
-    // Demand that SIGCHLD interrupt system calls
-    int r = set_signal_handler(SIGCHLD, signal_handler);
+    // Demand that SIGALRM interrupt system calls
+    int r = set_signal_handler(SIGALRM, signal_handler);
+    assert(r >= 0);
+    // Set the timer
+    struct itimerval itimer;
+    timerclear(&itimer.it_interval);
+    itimer.it_value.tv_sec = 0;
+    itimer.it_value.tv_usec = 750000;
+    r = setitimer(ITIMER_REAL, &itimer, nullptr);
     assert(r >= 0);
 
     // Start a child
@@ -22,23 +29,21 @@ int main(int, char** argv) {
     double start_time = tstamp();
 
     // Wait for the child and print its status
-    r = usleep(750000);
-    if (r == -1 && errno == EINTR) {
+    int status;
+    pid_t exited_pid = waitpid(p1, &status, 0);
+    if (exited_pid == -1 && errno == EINTR) {
         fprintf(stderr, "%s parent interrupted by signal after %g sec\n",
                 argv[0], tstamp() - start_time);
+        exit(0);
     }
 
-    int status;
-    pid_t exited_pid = waitpid(p1, &status, WNOHANG);
     assert(exited_pid == 0 || exited_pid == p1);
     if (exited_pid == 0) {
-        fprintf(stderr, "%s child %d timed out\n", argv[0], p1);
+        fprintf(stderr, "%s child timed out\n", argv[0]);
     } else if (WIFEXITED(status)) {
-        double lifetime = tstamp() - start_time;
-        fprintf(stderr, "%s child %d exited with status %d after %g sec\n",
-                argv[0], p1, WEXITSTATUS(status), lifetime);
+        fprintf(stderr, "%s child exited with status %d after %g sec\n",
+                argv[0], WEXITSTATUS(status), tstamp() - start_time);
     } else {
-        fprintf(stderr, "%s child %d exited abnormally [%x]\n",
-                argv[0], p1, status);
+        fprintf(stderr, "%s child exited abnormally [%x]\n", argv[0], status);
     }
 }
