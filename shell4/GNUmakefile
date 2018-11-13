@@ -2,9 +2,9 @@ PROGRAMS = pipesizer filtermultiples primesieve \
 	timedwait-poll timedwait-block timedwait-blockvar timedwait-selfpipe \
 	timedwait-signalfd
 
-all: $(PROGRAMS) timedwait-sigchld
+all: $(PROGRAMS)
 
-ALLPROGRAMS = $(PROGRAMS)
+ALLPROGRAMS = $(PROGRAMS) timedwait-sigchld
 
 O = 2
 include ../common/rules.mk
