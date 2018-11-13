@@ -1,9 +1,10 @@
-PROGRAMS = fork3 myecho runmyecho forkmyecho spawnmyecho \
-	waitdemo selfpipe childpipe
+PROGRAMS = pipesizer filtermultiples primesieve \
+	timedwait-poll timedwait-block timedwait-blockvar timedwait-selfpipe \
+	timedwait-signalfd
 
-all: $(PROGRAMS)
+all: $(PROGRAMS) timedwait-sigchld
 
-ALLPROGRAMS = $(PROGRAMS) filtermultiples primesieve
+ALLPROGRAMS = $(PROGRAMS)
 
 O = 2
 include ../common/rules.mk
