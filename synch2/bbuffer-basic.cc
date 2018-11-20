@@ -4,6 +4,7 @@
 #include <cassert>
 #include <thread>
 #include <algorithm>
+#include <atomic>
 
 struct bbuffer {
     static constexpr size_t bcapacity = 128;
@@ -57,15 +58,19 @@ void bbuffer::shutdown_write() {
 }
 
 
+std::atomic<size_t> nwrites;
+std::atomic<size_t> nreads;
+
 void writer_threadfunc(bbuffer& bb) {
     // Write `Hello world!\n` to the buffer a million times.
     // Result should have 13000000 characters.
-    const char message[] = "Hello world!\n";
-    const size_t message_len = strlen(message);
+    const char msg[] = "Hello world!\n";
+    const size_t msg_len = strlen(msg);
     for (int i = 0; i != 1000000; ++i) {
         size_t pos = 0;
-        while (pos < message_len) {
-            ssize_t nw = bb.write(&message[pos], message_len - pos);
+        while (pos < msg_len) {
+            ssize_t nw = bb.write(&msg[pos], msg_len - pos);
+            ++nwrites;
             if (nw > -1) {
                 pos += nw;
             }
@@ -79,6 +84,7 @@ void reader_threadfunc(bbuffer& bb) {
     char buf[BUFSIZ];
     ssize_t nr;
     while ((nr = bb.read(buf, sizeof(buf))) != 0) {
+        ++nreads;
         if (nr > -1) {
             fwrite(buf, 1, nr, stdout);
         }
@@ -92,4 +98,5 @@ int main() {
     std::thread writer(writer_threadfunc, std::ref(bb));
     reader.join();
     writer.join();
+    fprintf(stderr, "%zu reads, %zu writes\n", nreads.load(), nwrites.load());
 }
