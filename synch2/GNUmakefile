@@ -1,8 +1,8 @@
-PROGRAMS = bbuffer-basic bbuffer-mutex bbuffer-guard bbuffer-cond
+PROGRAMS = bbuffer-basic bbuffer-mutex bbuffer-scoped bbuffer-cond
 
 all: $(PROGRAMS)
 
-ALLPROGRAMS = $(PROGRAMS)
+ALLPROGRAMS = $(PROGRAMS) bbuffer-guard
 
 O = 2
 include ../common/rules.mk
@@ -23,7 +23,7 @@ LIBS := -lpthread
 
 
 clean:
-	rm -f $(ALLPROGRAMS) *.o data
+	rm -f $(ALLPROGRAMS) *.o *.core data
 	rm -rf $(DEPSDIR) *.dSYM
 
 .PRECIOUS: %.noopt.o

@@ -26,11 +26,9 @@ ssize_t bbuffer::write(const char* buf, size_t sz) {
     size_t pos = 0;
     while (pos < sz && this->blen_ < bcapacity) {
         size_t bindex = (this->bpos_ + this->blen_) % bcapacity;
-        size_t bspace = std::min(bcapacity - bindex, bcapacity - this->blen_);
-        size_t n = std::min(sz - pos, bspace);
-        memcpy(&this->bbuf_[bindex], &buf[pos], n);
-        this->blen_ += n;
-        pos += n;
+        this->bbuf_[bindex] = buf[pos];
+        ++this->blen_;
+        ++pos;
     }
     this->mutex_.unlock();
     if (pos == 0 && sz > 0) {
@@ -44,19 +42,16 @@ ssize_t bbuffer::read(char* buf, size_t sz) {
     this->mutex_.lock();
     size_t pos = 0;
     while (pos < sz && this->blen_ > 0) {
-        size_t bspace = std::min(this->blen_, bcapacity - this->bpos_);
-        size_t n = std::min(sz - pos, bspace);
-        memcpy(&buf[pos], &this->bbuf_[this->bpos_], n);
-        this->bpos_ = (this->bpos_ + n) % bcapacity;
-        this->blen_ -= n;
-        pos += n;
+        buf[pos] = this->bbuf_[this->bpos_];
+        this->bpos_ = (this->bpos_ + 1) % bcapacity;
+        --this->blen_;
+        ++pos;
+    }
+    if (pos == 0 && sz > 0 && !this->write_closed_) {
+        pos = -1;   // try again
     }
     this->mutex_.unlock();
-    if (pos == 0 && sz > 0 && !this->write_closed_) {
-        return -1;  // try again
-    } else {
-        return pos;
-    }
+    return pos;
 }
 
 void bbuffer::shutdown_write() {
