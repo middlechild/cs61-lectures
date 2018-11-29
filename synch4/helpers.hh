@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 #include <sys/resource.h>
 #include <sys/select.h>
 #include <sys/socket.h>
@@ -40,6 +41,18 @@ inline double tstamp(void) {
 //    connections.
 
 int open_listen_socket(int port);
+
+
+// is_valid_key(s)
+//    Returns true iff `s` is a valid WeensyDB key.
+
+inline bool is_valid_key(const char* s) {
+    const char* begin = s;
+    while (*s && !isspace((unsigned char) *s)) {
+        ++s;
+    }
+    return *s == 0 && s != begin;
+}
 
 
 // string_hash(s)

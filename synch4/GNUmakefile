@@ -1,5 +1,5 @@
 DB_PROGRAMS = $(sort $(patsubst %.cc,%,$(wildcard weensydb-??.cc)))
-PROGRAMS = wdbclient $(DB_PROGRAMS)
+PROGRAMS = wdbclient wdbclientloop wdbblaster $(DB_PROGRAMS)
 all: $(PROGRAMS)
 
 O = 2
